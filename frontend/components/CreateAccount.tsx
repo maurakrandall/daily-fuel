@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 
 interface CreateAccountProps {
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (firstName: string) => void;
 }
 
 export default function CreateAccount({ onBack, onComplete }: CreateAccountProps) {
@@ -18,35 +18,35 @@ export default function CreateAccount({ onBack, onComplete }: CreateAccountProps
     e.preventDefault();
     // In a real app, we'd validate and create the account here
     if (firstName && email && password) {
-      onComplete();
+      onComplete(firstName);
     }
   };
 
   const isFormValid = firstName.trim() !== '' && email.trim() !== '' && password.trim() !== '';
 
   return (
-    <div className="w-full max-w-md mx-auto min-h-screen flex flex-col py-8 px-6 animate-in fade-in duration-700">
+    <div className="flex-1 flex flex-col p-8 animate-in fade-in duration-700">
       
       <button 
         onClick={onBack}
-        className="flex items-center text-sm text-[#0A192F]/60 hover:text-[#0A192F] transition-colors mb-8"
+        className="flex items-center text-sm text-[#0A192F]/60 hover:text-[#0A192F] transition-colors mb-6 self-start"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
         Back
       </button>
 
-      <div className="flex-grow flex flex-col">
-        <div className="space-y-4 mb-10">
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="space-y-3 mb-8">
           <h1 className="text-4xl font-serif text-[#0A192F] tracking-tight leading-tight">
-            Let's <span className="italic">begin.</span>
+            Let's <span className="italic font-serif">begin.</span>
           </h1>
-          <p className="text-[#0A192F]/80 text-lg leading-relaxed">
+          <p className="text-[#0A192F]/80 text-base leading-relaxed">
             A few details to get you started. We keep this simple — and private.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-[#0A192F]/40 uppercase tracking-widest block">
               FIRST NAME
             </label>
@@ -55,12 +55,12 @@ export default function CreateAccount({ onBack, onComplete }: CreateAccountProps
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Maya"
-              className="w-full bg-white border border-[#0A192F]/10 rounded-xl px-4 py-3.5 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
+              className="w-full bg-white border border-[#0A192F]/10 rounded-xl px-4 py-3 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
               required
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-[#0A192F]/40 uppercase tracking-widest block">
               EMAIL
             </label>
@@ -69,12 +69,12 @@ export default function CreateAccount({ onBack, onComplete }: CreateAccountProps
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@something.com"
-              className="w-full bg-white border border-[#0A192F]/10 rounded-xl px-4 py-3.5 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
+              className="w-full bg-white border border-[#0A192F]/10 rounded-xl px-4 py-3 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
               required
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-[#0A192F]/40 uppercase tracking-widest block">
               PASSWORD
             </label>
@@ -84,7 +84,7 @@ export default function CreateAccount({ onBack, onComplete }: CreateAccountProps
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
-                className="w-full bg-white border border-[#0A192F]/10 rounded-xl pl-4 pr-16 py-3.5 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
+                className="w-full bg-white border border-[#0A192F]/10 rounded-xl pl-4 pr-16 py-3 text-[#0A192F] placeholder:text-[#0A192F]/30 focus:outline-none focus:border-[#D4AF37]/50 focus:ring-1 focus:ring-[#D4AF37]/50 transition-all shadow-sm"
                 required
               />
               <button
@@ -99,18 +99,18 @@ export default function CreateAccount({ onBack, onComplete }: CreateAccountProps
         </form>
       </div>
 
-      <div className="flex flex-col gap-6 pt-8 mt-auto">
+      <div className="flex flex-col gap-4 mt-auto pt-8">
         <button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-[#0A192F]/10 text-lg"
+          className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-[#0A192F]/10 text-base"
         >
           Create account
         </button>
         
         <button
           onClick={onBack} // For prototype, just goes back to landing
-          className="text-sm text-[#0A192F]/60 hover:text-[#0A192F] transition-colors underline underline-offset-4 decoration-[#0A192F]/20"
+          className="text-sm text-[#0A192F]/60 hover:text-[#0A192F] transition-colors underline underline-offset-4 decoration-[#0A192F]/20 pb-2"
         >
           Sign in instead
         </button>

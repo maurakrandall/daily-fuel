@@ -12,7 +12,7 @@ interface NavigationProps {
 
 export default function Navigation({ currentView, onNavigate }: NavigationProps) {
   const navItems = [
-    { id: 'home' as ViewState, label: 'Daily Fuel', icon: Sun },
+    { id: 'home' as ViewState, label: 'Today', icon: Sun },
     { id: 'my-foods' as ViewState, label: 'My Foods', icon: Heart },
     { id: 'my-goals' as ViewState, label: 'My Goals', icon: User },
   ];

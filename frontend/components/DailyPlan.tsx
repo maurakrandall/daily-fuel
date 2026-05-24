@@ -113,17 +113,17 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
     switch (state) {
       case 'feeling_good':
         return {
-          title: <>Any <span className="italic">go-tos</span> so far today?</>,
+          title: <>Any <span className="italic font-serif">go-tos</span> so far today?</>,
           sub: "Even something small counts toward today."
         };
       case 'not_hungry':
         return {
-          title: <><span className="italic">Anything</span> so far? Even a shake or coffee counts.</>,
+          title: <><span className="italic font-serif">Anything</span> so far? Even a shake or coffee counts.</>,
           sub: "Sometimes autopilot does more than we think."
         };
       case 'rough_day':
         return {
-          title: <>Anything today? Even the <span className="italic">small stuff</span> counts.</>,
+          title: <>Anything today? Even the <span className="italic font-serif">small stuff</span> counts.</>,
           sub: "We'll build from wherever today started."
         };
     }
@@ -279,31 +279,34 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
     };
 
     return (
-      <div className="w-full max-w-md mx-auto min-h-[60vh] flex flex-col justify-center text-center animate-in fade-in duration-1000 py-12">
-        <div className="space-y-8">
-          <h2 className="text-3xl md:text-4xl font-serif text-[#0A192F] tracking-tight leading-tight">
-            {renderWinTitle()}
-          </h2>
-          <p className="text-xl text-[#0A192F]/80 leading-relaxed">
-            {getStateSpecificWinMessage()}
-          </p>
-        </div>
+      <>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7] to-[#F4D780]/40 -z-10 pointer-events-none rounded-[2rem]" />
+        <div className="w-full max-w-md mx-auto min-h-[60vh] flex flex-col justify-center text-center animate-in fade-in duration-1000 py-12">
+          <div className="space-y-8">
+            <h2 className="text-3xl md:text-4xl font-serif text-[#0A192F] tracking-tight leading-tight">
+              {renderWinTitle()}
+            </h2>
+            <p className="text-xl text-[#0A192F]/80 leading-relaxed">
+              {getStateSpecificWinMessage()}
+            </p>
+          </div>
 
-        <div className="mt-16 space-y-4">
-          <p className="text-sm text-[#0A192F]/50 font-medium mb-6">
-            We'll check in tomorrow. Same time, same place — your Go-Tos will be ready.
-          </p>
-          <button 
-            onClick={() => {
-              onSaveSession(Array.from(selectedItems));
-              setView('saved');
-            }}
-            className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all shadow-lg shadow-[#0A192F]/10 text-lg"
-          >
-            See my plan
-          </button>
+          <div className="mt-16 space-y-4">
+            <p className="text-sm text-[#0A192F]/50 font-medium mb-6">
+              We'll check in tomorrow. Same time, same place — your Go-Tos will be ready.
+            </p>
+            <button 
+              onClick={() => {
+                onSaveSession(Array.from(selectedItems));
+                setView('saved');
+              }}
+              className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all shadow-lg shadow-[#0A192F]/10 text-lg"
+            >
+              See my plan
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -354,7 +357,7 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
           <div className="space-y-4">
             <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">ROUND 2</div>
             <h2 className="text-4xl font-serif text-[#0A192F] tracking-tight leading-tight">
-              Here are some popular options for <span className="italic">closing the gap.</span>
+              Here are some popular options for <span className="italic font-serif">closing the gap.</span>
             </h2>
           </div>
           {renderRunningTotalAndBar("COMBINED SO FAR")}
@@ -377,7 +380,7 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
           
           {showSearchConfirmation && (
             <div className="absolute -bottom-10 left-0 right-0 text-center animate-in fade-in slide-in-from-top-2 duration-300">
-              <span className="text-sm text-[#D4AF37] font-medium italic">Added to today's plan — and saved to My Foods.</span>
+              <span className="text-sm text-[#D4AF37] font-medium italic font-serif">Added to today's plan — and saved to My Foods.</span>
             </div>
           )}
           
@@ -410,7 +413,7 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
           ))}
         </div>
 
-        <p className="text-sm text-[#0A192F]/60 text-center italic px-4 pt-4">
+        <p className="text-sm text-[#0A192F]/60 text-center italic font-serif px-4 pt-4">
           Like something new? Add it to My Foods and it'll show up in your plan next time.
         </p>
 
@@ -433,98 +436,101 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
     );
 
     return (
-      <div className="w-full max-w-md mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-serif text-[#0A192F] tracking-tight leading-tight">
-              Today's Plan
-            </h2>
-            {isCompleted && (
-              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#0A192F]/5 text-[#0A192F]/60 uppercase tracking-wider">
-                Completed
-              </span>
+      <>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7] to-[#F5E6C8]/80 -z-10 pointer-events-none rounded-[2rem]" />
+        <div className="w-full max-w-md mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-3xl font-serif text-[#0A192F] tracking-tight leading-tight">
+                Today's Plan
+              </h2>
+              {isCompleted && (
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#0A192F]/5 text-[#0A192F]/60 uppercase tracking-wider">
+                  Completed
+                </span>
+              )}
+            </div>
+            {renderRunningTotalAndBar()}
+          </div>
+
+          <div className="space-y-3">
+            {savedFoods.length > 0 ? savedFoods.map((food, index) => (
+              <div 
+                key={food.id} 
+                className="animate-in fade-in slide-in-from-bottom-4"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
+              >
+                <FoodCard 
+                  food={food} 
+                  isSelected={true}
+                  onToggle={() => { if (!isCompleted) toggleItem(food.id); }}
+                />
+              </div>
+            )) : (
+              <div className="text-center py-8 text-[#0A192F]/60 italic font-serif">
+                No foods selected yet.
+              </div>
             )}
           </div>
-          {renderRunningTotalAndBar()}
-        </div>
 
-        <div className="space-y-3">
-          {savedFoods.length > 0 ? savedFoods.map((food, index) => (
-            <div 
-              key={food.id} 
-              className="animate-in fade-in slide-in-from-bottom-4"
-              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
-            >
-              <FoodCard 
-                food={food} 
-                isSelected={true}
-                onToggle={() => { if (!isCompleted) toggleItem(food.id); }}
-              />
+          {renderSupplementsReminder()}
+
+          {isCompleted ? (
+            <div className="pt-8 border-t border-[#0A192F]/10 text-center animate-in fade-in duration-500">
+              <h3 className="text-lg font-medium text-[#0A192F]">Nice work today. We'll check in tomorrow.</h3>
+              <p className="text-sm text-[#0A192F]/50 mt-2">Same time, same place — your Go-Tos will be ready.</p>
             </div>
-          )) : (
-            <div className="text-center py-8 text-[#0A192F]/60 italic">
-              No foods selected yet.
+          ) : showEndOfDayPrompt ? (
+            <div className="pt-8 border-t border-[#0A192F]/10 animate-in fade-in duration-500">
+              <h3 className="text-xl font-serif text-[#0A192F] mb-4 text-center">How'd today go?</h3>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => onSaveSession(Array.from(selectedItems), true)}
+                  className="w-full p-4 rounded-xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#0A192F] font-medium hover:bg-[#D4AF37]/20 transition-colors text-center"
+                >
+                  Nailed it
+                </button>
+                <button 
+                  onClick={() => onSaveSession(Array.from(selectedItems), true)}
+                  className="w-full p-4 rounded-xl border border-[#0A192F]/10 bg-[#FDFBF7] text-[#0A192F] font-medium hover:bg-white transition-colors text-center"
+                >
+                  Survived it
+                </button>
+                <button 
+                  onClick={() => onSaveSession(Array.from(selectedItems), true)}
+                  className="w-full p-4 rounded-xl border border-transparent bg-[#0A192F]/5 text-[#0A192F]/70 font-medium hover:bg-[#0A192F]/10 transition-colors text-center"
+                >
+                  Skipped it
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="pt-8 flex flex-col items-center">
+              {selectedItems.size > 0 ? (
+                <button 
+                  onClick={() => setView('close-gap')}
+                  className="w-full py-4 rounded-full bg-transparent border-2 border-[#0A192F] text-[#0A192F] font-medium hover:bg-[#0A192F]/5 transition-all text-lg"
+                >
+                  Close the gap
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setView('draft')}
+                  className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all shadow-lg shadow-[#0A192F]/10 text-lg"
+                >
+                  Add foods
+                </button>
+              )}
+              <button 
+                onClick={() => setShowEndOfDayPrompt(true)}
+                className="mt-6 text-sm text-[#0A192F]/50 hover:text-[#0A192F] transition-colors underline underline-offset-4"
+              >
+                Done for today?
+              </button>
             </div>
           )}
         </div>
-
-        {renderSupplementsReminder()}
-
-        {isCompleted ? (
-          <div className="pt-8 border-t border-[#0A192F]/10 text-center animate-in fade-in duration-500">
-            <h3 className="text-lg font-medium text-[#0A192F]">Nice work today. We'll check in tomorrow.</h3>
-            <p className="text-sm text-[#0A192F]/50 mt-2">Same time, same place — your Go-Tos will be ready.</p>
-          </div>
-        ) : showEndOfDayPrompt ? (
-          <div className="pt-8 border-t border-[#0A192F]/10 animate-in fade-in duration-500">
-            <h3 className="text-xl font-serif text-[#0A192F] mb-4 text-center">How'd today go?</h3>
-            <div className="space-y-3">
-              <button 
-                onClick={() => onSaveSession(Array.from(selectedItems), true)}
-                className="w-full p-4 rounded-xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#0A192F] font-medium hover:bg-[#D4AF37]/20 transition-colors text-center"
-              >
-                Nailed it
-              </button>
-              <button 
-                onClick={() => onSaveSession(Array.from(selectedItems), true)}
-                className="w-full p-4 rounded-xl border border-[#0A192F]/10 bg-[#FDFBF7] text-[#0A192F] font-medium hover:bg-white transition-colors text-center"
-              >
-                Survived it
-              </button>
-              <button 
-                onClick={() => onSaveSession(Array.from(selectedItems), true)}
-                className="w-full p-4 rounded-xl border border-transparent bg-[#0A192F]/5 text-[#0A192F]/70 font-medium hover:bg-[#0A192F]/10 transition-colors text-center"
-              >
-                Skipped it
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="pt-8 flex flex-col items-center">
-            {selectedItems.size > 0 ? (
-              <button 
-                onClick={() => setView('close-gap')}
-                className="w-full py-4 rounded-full bg-transparent border-2 border-[#0A192F] text-[#0A192F] font-medium hover:bg-[#0A192F]/5 transition-all text-lg"
-              >
-                Close the gap
-              </button>
-            ) : (
-              <button 
-                onClick={() => setView('draft')}
-                className="w-full py-4 rounded-full bg-[#0A192F] text-white font-medium hover:bg-[#0A192F]/90 transition-all shadow-lg shadow-[#0A192F]/10 text-lg"
-              >
-                Add foods
-              </button>
-            )}
-            <button 
-              onClick={() => setShowEndOfDayPrompt(true)}
-              className="mt-6 text-sm text-[#0A192F]/50 hover:text-[#0A192F] transition-colors underline underline-offset-4"
-            >
-              Done for today?
-            </button>
-          </div>
-        )}
-      </div>
+      </>
     );
   }
 
@@ -560,7 +566,7 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
             />
           </div>
         )) : (
-          <div className="text-center py-8 text-[#0A192F]/60 italic">
+          <div className="text-center py-8 text-[#0A192F]/60 italic font-serif">
             No foods selected during onboarding.
           </div>
         )}
