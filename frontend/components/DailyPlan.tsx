@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { DailyState, FoodItem, generatePlan, UserPreferences, mockFoodDatabase } from '../lib/data';
 import FoodCard from './FoodCard';
 import { ArrowLeft, Search } from 'lucide-react';
+import SunGraphic from './ui/SunGraphic';
 
 interface DailyPlanProps {
   state: DailyState;
@@ -164,11 +165,17 @@ export default function DailyPlan({ state, preferences, initialItems = [], initi
           ~{totalProtein}g protein · ~{totalFiber}g fiber
         </span>
       </div>
-      <div className="h-3 w-full bg-[#0A192F]/5 rounded-full overflow-hidden">
+      <div className="relative h-3 w-full bg-[#0A192F]/5 rounded-full">
         <div 
-          className="h-full bg-gradient-to-r from-[#FDFBF7] to-[#D4AF37] transition-all duration-1000 ease-out rounded-full"
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#FDFBF7] to-[#D4AF37] transition-all duration-1000 ease-out rounded-full"
           style={{ width: `${barWidth}%` }}
         />
+        <div 
+          className="absolute top-1/2 -translate-y-1/2 transition-all duration-1000 ease-out"
+          style={{ left: `calc(${barWidth}% - 16px)` }}
+        >
+          <SunGraphic size={32} showRays={false} glowOpacity={0.5 + (barWidth / 200)} />
+        </div>
       </div>
       {view !== 'pre-plan' && (
         <div className={`text-sm text-[#0A192F]/60 transition-opacity duration-500 ${selectedItems.size > 0 ? 'opacity-100' : 'opacity-0'}`}>

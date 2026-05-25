@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Daily Fuel — Onboarding Explorations (Print)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,50..100;1,9..144,300..600,50..100&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; padding: 0; background: #e8e6e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1B2A4A; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  * { box-sizing: border-box; }
+
+  /* ---- Paged layout (screen = preview; print = real pages) ---- */
+  .page {
+    width: 279.4mm;           /* US Letter landscape */
+    height: 215.9mm;
+    padding: 14mm 16mm;
+    background: #FAF8F3;
+    margin: 12mm auto;
+    box-shadow: 0 2px 12px rgba(0,0,0,.12);
+    display: flex; flex-direction: column;
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    overflow: hidden;
+    position: relative;
+  }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+
+  .page.dark { background: #0D1526; color: #EDE5D0; }
+
+  /* ---- Page header ---- */
+  .ph { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10mm; border-bottom: 1px solid rgba(27,42,74,.14); margin-bottom: 9mm; }
+  .page.dark .ph { border-bottom-color: rgba(237,229,208,.18); }
+
+  .ph-kicker { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: #C8880A; margin-bottom: 6px; }
+  .ph-title  { font-family: "Fraunces", Georgia, serif; font-size: 34px; line-height: 1; font-weight: 400; letter-spacing: -0.01em; }
+  .ph-sub    { font-size: 12px; color: #6C6456; max-width: 560px; margin-top: 6px; line-height: 1.5; }
+  .page.dark .ph-sub { color: #A9A08A; }
+
+  .ph-meta { text-align: right; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: #9C8878; }
+  .page.dark .ph-meta { color: #A9A08A; }
+
+  /* ---- Screen grid ---- */
+  .grid5 {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10mm;
+    align-items: center;
+    justify-items: center;
+  }
+  .slot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .slot-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: #9C8878;
+  }
+  .page.dark .slot-label { color: #A9A08A; }
+
+  /* Scaled phone: source is 390×780, fits each column */
+  .phone-wrap {
+    width: 390px; height: 780px;
+    transform-origin: top center;
+    /* computed transform set inline in JS after mount */
+  }
+
+  /* ---- Notes page ---- */
+  .notes-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12mm; margin-top: 4mm; }
+  .notes-col h4 { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: 18px; margin: 0 0 10px; letter-spacing: -0.005em; }
+  .notes-col .bar { width: 28px; height: 2px; background: #C8880A; margin-bottom: 14px; }
+  .notes-col ul { margin: 0; padding: 0; list-style: none; font-size: 12px; line-height: 1.55; color: #3A3328; }
+  .notes-col li { padding: 8px 0; border-top: 1px solid rgba(27,42,74,.1); }
+  .notes-col li:first-child { border-top: none; }
+  .notes-col b { color: #1B2A4A; font-weight: 600; }
+
+  /* ---- Cover page ---- */
+  .cover { justify-content: space-between; }
+  .cover .c-top { display: flex; justify-content: space-between; align-items: flex-start; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: #9C8878; }
+  .cover .c-main { align-self: center; text-align: left; max-width: 720px; }
+  .cover .c-kicker { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #C8880A; font-weight: 700; margin-bottom: 20px; }
+  .cover .c-title { font-family: "Fraunces", Georgia, serif; font-size: 68px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 300; margin: 0; }
+  .cover .c-title em { font-style: italic; font-weight: 300; color: #C8880A; }
+  .cover .c-sub { font-size: 15px; line-height: 1.55; color: #6C6456; margin-top: 28px; max-width: 580px; }
+  .cover .c-toc { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 14mm; border-top: 1px solid rgba(27,42,74,.14); padding-top: 12mm; }
+  .cover .c-toc .num { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; letter-spacing: 1.4px; color: #C8880A; margin-bottom: 6px; }
+  .cover .c-toc .nm  { font-family: "Fraunces", Georgia, serif; font-size: 18px; line-height: 1.15; }
+  .cover .c-toc .dc  { font-size: 11px; color: #6C6456; margin-top: 4px; line-height: 1.4; }
+
+  /* ---- Print ---- */
+  @page { size: 11in 8.5in; margin: 0; }
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; width: 11in; height: 8.5in; padding: 14mm 16mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======= COVER ======= -->
+<section class="page cover">
+  <div class="c-top">
+    <span>Daily Fuel · Onboarding</span>
+    <span>v1 · Design Exploration</span>
+  </div>
+
+  <div class="c-main">
+    <div class="c-kicker">Onboarding · Visual exploration</div>
+    <h1 class="c-title">Three directions<br>for the first <em>five minutes.</em></h1>
+    <p class="c-sub">Daily Fuel helps people on weight-loss meds build a warm, intentional nutrition habit. Three visual languages — Golden Hour, Soft Current, and Ritual — each rendered across the same five-screen flow.</p>
+  </div>
+
+  <div class="c-toc">
+    <div><div class="num">01</div><div class="nm">Cover</div><div class="dc">Intro & context</div></div>
+    <div><div class="num">02</div><div class="nm">Golden Hour</div><div class="dc">Warm editorial. Cream + navy + gold.</div></div>
+    <div><div class="num">03</div><div class="nm">Soft Current</div><div class="dc">Teal-led, fluid. Watercolor.</div></div>
+    <div><div class="num">04</div><div class="nm">Ritual</div><div class="dc">Deep navy. The boldest direction.</div></div>
+    <div><div class="num">05</div><div class="nm">Design notes</div><div class="dc">Principles, transitions, tests.</div></div>
+  </div>
+</section>
+
+<!-- ======= GOLDEN HOUR ======= -->
+<section class="page" data-dir="gh">
+  <header class="ph">
+    <div>
+      <div class="ph-kicker">Direction 01</div>
+      <div class="ph-title">Golden Hour</div>
+      <div class="ph-sub">Warm editorial. Cream + navy + gold. Serif display, soft gradient blobs. The calmest of the three — leans on typographic restraint and a single accent color.</div>
+    </div>
+    <div class="ph-meta">02 / 05<br>Cream · Navy · Gold</div>
+  </header>
+  <div class="grid5">
+    <div class="slot"><div class="phone-wrap" id="gh1"></div><div class="slot-label">01 · Landing</div></div>
+    <div class="slot"><div class="phone-wrap" id="gh2"></div><div class="slot-label">02 · Intention</div></div>
+    <div class="slot"><div class="phone-wrap" id="gh3"></div><div class="slot-label">03 · Go-tos</div></div>
+    <div class="slot"><div class="phone-wrap" id="gh4"></div><div class="slot-label">04 · Dietary</div></div>
+    <div class="slot"><div class="phone-wrap" id="gh5"></div><div class="slot-label">05 · Welcome</div></div>
+  </div>
+</section>
+
+<!-- ======= SOFT CURRENT ======= -->
+<section class="page" data-dir="sc">
+  <header class="ph">
+    <div>
+      <div class="ph-kicker">Direction 02</div>
+      <div class="ph-title">Soft Current</div>
+      <div class="ph-sub">Teal-led, fluid. Watercolor backdrops, modern sans (Manrope), flowing dot progress. The most contemporary of the three.</div>
+    </div>
+    <div class="ph-meta">03 / 05<br>Teal · Sand · Coral</div>
+  </header>
+  <div class="grid5">
+    <div class="slot"><div class="phone-wrap" id="sc1"></div><div class="slot-label">01 · Landing</div></div>
+    <div class="slot"><div class="phone-wrap" id="sc2"></div><div class="slot-label">02 · Targets</div></div>
+    <div class="slot"><div class="phone-wrap" id="sc3"></div><div class="slot-label">03 · Your kit</div></div>
+    <div class="slot"><div class="phone-wrap" id="sc4"></div><div class="slot-label">04 · Leave out</div></div>
+    <div class="slot"><div class="phone-wrap" id="sc5"></div><div class="slot-label">05 · All set</div></div>
+  </div>
+</section>
+
+<!-- ======= RITUAL ======= -->
+<section class="page dark" data-dir="rt">
+  <header class="ph">
+    <div>
+      <div class="ph-kicker" style="color:#E7C77A">Direction 03</div>
+      <div class="ph-title" style="color:#EDE5D0">Ritual</div>
+      <div class="ph-sub">Deep navy field. Fraunces + JetBrains Mono. Precise geometric glyphs instead of blobs. Reframes goals as <em>intention</em> and dietary needs as <em>boundaries</em>.</div>
+    </div>
+    <div class="ph-meta">04 / 05<br>Navy · Bone · Saffron</div>
+  </header>
+  <div class="grid5">
+    <div class="slot"><div class="phone-wrap" id="rt1"></div><div class="slot-label">01 · Landing</div></div>
+    <div class="slot"><div class="phone-wrap" id="rt2"></div><div class="slot-label">02 · Intention</div></div>
+    <div class="slot"><div class="phone-wrap" id="rt3"></div><div class="slot-label">03 · In your corner</div></div>
+    <div class="slot"><div class="phone-wrap" id="rt4"></div><div class="slot-label">04 · Boundaries</div></div>
+    <div class="slot"><div class="phone-wrap" id="rt5"></div><div class="slot-label">05 · Day zero</div></div>
+  </div>
+</section>
+
+<!-- ======= NOTES ======= -->
+<section class="page">
+  <header class="ph">
+    <div>
+      <div class="ph-kicker">Appendix</div>
+      <div class="ph-title">Design notes</div>
+      <div class="ph-sub">Shared principles across all three directions, animation ideas for the next round, and the questions a usability test should answer.</div>
+    </div>
+    <div class="ph-meta">05 / 05</div>
+  </header>
+  <div class="notes-body">
+    <div class="notes-col">
+      <h4>Shared principles</h4>
+      <div class="bar"></div>
+      <ul>
+        <li><b>Language.</b> "Intention," "in your corner," "boundaries," "leave out" — never "tracking," "goals," "restrictions."</li>
+        <li><b>One question per screen.</b> Goals became a 3-preset choice (gentle / steady / stronger); numbers are secondary.</li>
+        <li><b>"Closing the gap" seeded</b> on the celebration — tomorrow's progress ring introduces the concept without teaching it yet.</li>
+        <li><b>Skip is first-class everywhere.</b> Every screen has a soft out.</li>
+        <li><b>Disclaimer present, never dominant.</b> Small, italic, below the fold.</li>
+      </ul>
+    </div>
+    <div class="notes-col">
+      <h4>Transitions (next round)</h4>
+      <div class="bar"></div>
+      <ul>
+        <li><b>Content fades up 12px</b>; background color/shape parallaxes at ~40% speed — premium, meditative.</li>
+        <li><b>Celebration hero</b> (sun / glow / ritual sun) scales 40% → 100% on entry, 480ms ease-out.</li>
+        <li><b>Pill selection</b> micro-tap: 120ms scale-down to 0.96, haptic-equivalent feedback.</li>
+        <li><b>Screen-to-screen</b> horizontal slide at 360ms, cubic-bezier(.2, .8, .2, 1).</li>
+      </ul>
+    </div>
+    <div class="notes-col">
+      <h4>Usability test priorities</h4>
+      <div class="bar"></div>
+      <ul>
+        <li>Does <b>"intention / in your corner / boundaries"</b> feel warm or cringe? Ritual vs. Soft Current will tell us.</li>
+        <li>Do <b>presets replace the numeric input</b>, or do users want to see numbers? A skippable "set exact numbers" link tests demand.</li>
+        <li>Does the <b>tomorrow preview</b> on celebration feel like a payoff — or a premature obligation?</li>
+        <li>Which <b>direction</b> most reads as "calm, not clinical"?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div id="hidden-root" style="position:absolute;left:-99999px;top:0;"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- Inline stubs for anything the direction files might look for outside shared.jsx -->
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="direction-1-golden-hour.jsx"></script>
+<script type="text/babel" src="direction-2-soft-current.jsx"></script>
+<script type="text/babel" src="direction-3-ritual.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+(async () => {
+  // Wait for fonts + direction scripts to register globals
+  await document.fonts.ready;
+  // give Babel-transpiled scripts a beat to execute
+  await new Promise(r => setTimeout(r, 250));
+
+  const mounts = [
+    ['gh1', window.GH_Landing],     ['gh2', window.GH_Goals],
+    ['gh3', window.GH_Foods],       ['gh4', window.GH_Dietary],
+    ['gh5', window.GH_Celebration],
+    ['sc1', window.SC_Landing],     ['sc2', window.SC_Goals],
+    ['sc3', window.SC_Foods],       ['sc4', window.SC_Dietary],
+    ['sc5', window.SC_Celebration],
+    ['rt1', window.RT_Landing],     ['rt2', window.RT_Goals],
+    ['rt3', window.RT_Foods],       ['rt4', window.RT_Dietary],
+    ['rt5', window.RT_Celebration],
+  ];
+
+  // Work out scale: each column gets roughly (279.4 - 32 - 40) / 5 mm ≈ 41.5mm.
+  // Phone source is 390px wide. At 96dpi, 41mm ≈ 155px. Scale = 155/390 ≈ 0.40.
+  // Pick 0.42 for slightly bigger phones, which still fits comfortably.
+  const SCALE = 0.42;
+
+  for (const [id, Comp] of mounts) {
+    const el = document.getElementById(id);
+    if (!el || !Comp) {
+      if (el) el.innerHTML = '<div style="width:390px;height:780px;background:#eee;display:flex;align-items:center;justify-content:center;font:12px monospace;color:#999;">' + id + ' missing</div>';
+      continue;
+    }
+    el.style.width = (390 * SCALE) + 'px';
+    el.style.height = (780 * SCALE) + 'px';
+    const inner = document.createElement('div');
+    inner.style.width = '390px';
+    inner.style.height = '780px';
+    inner.style.transform = 'scale(' + SCALE + ')';
+    inner.style.transformOrigin = 'top left';
+    el.appendChild(inner);
+    ReactDOM.createRoot(inner).render(React.createElement(Comp));
+  }
+
+  // Give React a moment to paint, then print.
+  await new Promise(r => setTimeout(r, 700));
+  window.__readyToPrint = true;
+
+  // Auto-print unless ?noprint is in the URL (used for preview/verification).
+  if (!window.__printTriggered && !/[?&]noprint/.test(location.search)) {
+    window.__printTriggered = true;
+    window.print();
+  }
+})();
+</script>
+</body>
+</html>

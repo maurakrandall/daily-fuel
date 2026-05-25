@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Daily Fuel — Golden Hour v3 Update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,30..100;1,9..144,300..600,30..100&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --cream:        #FDFBF7;
+    --cream-warm:   #F8F0DE;
+    --cream-deep:   #F0E6CF;
+    --cream-line:   rgba(10, 25, 47, 0.10);
+    --cream-soft:   rgba(10, 25, 47, 0.06);
+    --navy:         #0A192F;
+    --navy-mid:     #1B2A4A;
+    --navy-mute:    #46506A;
+    --ink:          #2A2517;
+    --muted:        #8A7E6E;
+    --muted-soft:   #B7AB97;
+    --gold:         #D4AF37;
+    --gold-deep:    #A8841C;
+    --gold-soft:    #F0D896;
+    --gold-glow:    #FBE9B3;
+    --serif: "Fraunces", "Cormorant Garamond", Georgia, serif;
+    --sans:  "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: #15130F; min-height: 100%; color: var(--navy); font-family: var(--sans); }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  deck-stage { --slide-w: 1920px; --slide-h: 1080px; }
+
+  /* ── Slide canvas ─────────────────────────────────────────────── */
+  section.slide {
+    width: 1920px; height: 1080px;
+    background: var(--cream);
+    color: var(--navy);
+    font-family: var(--sans);
+    padding: 90px 120px 100px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  section.slide.no-pad { padding: 0; }
+
+  /* Soft golden-hour backdrop */
+  section.slide::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(240, 216, 150, 0.32), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgba(248, 240, 222, 0.55), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  section.slide > * { position: relative; z-index: 1; }
+
+  /* dark variant for cover + section dividers */
+  section.slide.dark { background: #15130F; color: var(--cream); }
+  section.slide.dark::before {
+    background:
+      radial-gradient(ellipse 60% 40% at 30% 30%, rgba(212, 175, 55, 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 60% at 80% 100%, rgba(212, 175, 55, 0.08), transparent 70%);
+  }
+
+  /* ── Typography ───────────────────────────────────────────────── */
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 17px;
+    letter-spacing: 4.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gold-deep);
+  }
+  .dark .eyebrow { color: var(--gold-glow); }
+
+  .display {
+    font-family: var(--serif);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.018em;
+    color: var(--navy);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .dark .display { color: var(--cream); }
+  .display em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold-deep);
+  }
+  .dark .display em { color: var(--gold-glow); }
+
+  .body {
+    font-family: var(--sans);
+    line-height: 1.55;
+    color: var(--navy-mute);
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+  .dark .body { color: var(--muted-soft); }
+
+  .mono {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .struck { text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: var(--gold); opacity: 0.55; }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 5px 12px; border-radius: 999px;
+    font-family: var(--sans); font-size: 12px; font-weight: 700;
+    letter-spacing: 1.4px; text-transform: uppercase;
+  }
+  .badge.new { background: rgba(212, 175, 55, 0.18); color: var(--gold-deep); border: 1px solid rgba(212, 175, 55, 0.5); }
+  .badge.updated { background: transparent; color: var(--navy-mute); border: 1px solid var(--cream-line); }
+  .dark .badge.new { background: rgba(212, 175, 55, 0.18); color: var(--gold-glow); border-color: rgba(212, 175, 55, 0.6); }
+  .dark .badge.updated { color: var(--muted-soft); border-color: rgba(183, 171, 151, 0.4); }
+
+  /* ── Footer ────────────────────────────────────────────────────── */
+  .slide-footer {
+    position: absolute; left: 120px; right: 120px; bottom: 46px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 15px; letter-spacing: 2.4px;
+    text-transform: uppercase; color: var(--muted);
+    z-index: 2;
+  }
+  .dark .slide-footer { color: var(--muted-soft); }
+  .slide-footer .left { display: flex; align-items: center; gap: 14px; }
+  .slide-footer .dot { width: 6px; height: 6px; border-radius: 3px; background: var(--gold); }
+
+  /* ── React-rendered phone shell (390 × 844, scaled) ───────────── */
+  .phone-mount {
+    background: var(--cream);
+    border-radius: 38px;
+    box-shadow:
+      0 30px 80px rgba(10, 25, 47, 0.28),
+      0 0 0 9px #0a0907,
+      0 0 0 10px #38322a;
+    width: 390px;
+    height: 844px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transform-origin: top center;
+  }
+  .phone-frame { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .phone-frame .caption {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); font-weight: 600;
+    text-align: center; max-width: 320px;
+  }
+  .phone-frame .caption.gold { color: var(--gold-deep); }
+
+  /* ── Layouts ──────────────────────────────────────────────────── */
+  .row { display: flex; gap: 60px; align-items: flex-start; }
+  .col { display: flex; flex-direction: column; }
+  .stack { display: flex; flex-direction: column; }
+
+  /* "Why this changed" callout block */
+  .rationale {
+    padding: 22px 26px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--cream-line);
+    border-radius: 16px;
+    border-left: 3px solid var(--gold);
+  }
+  .rationale .label {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold-deep); font-weight: 700; margin-bottom: 8px;
+  }
+
+  /* Spec list */
+  .spec { display: flex; flex-direction: column; gap: 18px; }
+  .spec .item { display: flex; align-items: flex-start; gap: 14px; }
+  .spec .item .pill {
+    flex-shrink: 0; font-family: var(--mono); font-size: 10px;
+    letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700;
+    padding: 4px 8px; border-radius: 5px; min-width: 80px; text-align: center;
+    background: rgba(212, 175, 55, 0.14); color: var(--gold-deep);
+  }
+  .spec .item .pill.do  { background: rgba(10, 25, 47, 0.08); color: var(--navy); }
+  .spec .item .text { color: var(--navy-mute); font-size: 17px; line-height: 1.55; flex: 1; }
+  .spec .item .text b { color: var(--navy); font-weight: 600; }
+
+  /* Copy diff blocks */
+  .diff {
+    padding: 18px 22px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--cream-line);
+    border-radius: 14px;
+  }
+  .diff .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+  .diff .lbl.before { color: var(--muted); }
+  .diff .lbl.after { color: var(--gold-deep); }
+  .diff .copy { font-family: var(--serif); font-size: 21px; font-style: italic; font-weight: 300; color: var(--navy); line-height: 1.25; letter-spacing: -0.015em; }
+  .diff.before .copy { color: var(--muted); font-style: normal; font-family: var(--sans); font-size: 18px; }
+
+  /* Tiny sun glyph in corners */
+  .corner-sun {
+    position: absolute; top: 70px; right: 90px; width: 56px; height: 56px;
+    z-index: 1;
+  }
+
+  /* Index list (for "what's new" slide) */
+  .index-list { display: flex; flex-direction: column; gap: 14px; max-width: 980px; }
+  .index-list .row-item {
+    display: flex; align-items: center; gap: 22px;
+    padding: 18px 26px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--cream-line);
+    border-radius: 14px;
+  }
+  .index-list .row-item .num {
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: 1.4px; flex-shrink: 0; min-width: 32px;
+  }
+  .index-list .row-item .name { font-family: var(--serif); font-size: 22px; color: var(--navy); letter-spacing: -0.012em; flex: 1; }
+  .index-list .row-item .name em { font-style: italic; color: var(--gold-deep); font-weight: 300; }
+  .index-list .row-item .desc { font-family: var(--sans); font-size: 14px; color: var(--navy-mute); flex: 1.6; line-height: 1.5; }
+
+  /* Animations */
+  @keyframes df-ray-pulse {
+    0%, 100% { opacity: 0.45; transform: scaleX(1); }
+    50%      { opacity: 0.85; transform: scaleX(1.08); }
+  }
+  @keyframes df-fadeup {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!-- ── Speaker notes ────────────────────────────────────────────── -->
+<script type="application/json" id="speaker-notes">
+[
+  "Golden Hour v3. Same palette, same sun metaphor, same warmth. What changed is the frame — Close the Gap is now the primary lens for the entire experience, not a feature buried at the bottom of the daily plan. The whole product is built around it.",
+  "Here's the full slate of changes. Two new onboarding screens. One new screen in the daily flow — A2, which is the biggest single addition. The food card got rebuilt. Search came into Close the Gap and My Foods. Category labels got a copy pass. Headers across the daily plan now use closing-the-gap language. Each of these followed from bootcamp feedback.",
+  "Before we start adding personal info, we slow down. The sun is small and settled here — this isn't a moment to perform; it's a moment to commit. Three protective principles, plainly stated. A handshake before any data is collected.",
+  "Some users have provider-shared targets; many don't. Both paths feel equally valid. Yes-path uses the same pill language as Go-Tos so it feels familiar. Not-yet path gets a warm, non-judgmental message that points them to My Goals later. Targets are infrastructure — they power the gap math behind the scenes, but the horizon stays abstract.",
+  "This is the biggest UX addition. After the state selector, before the plan, we ask — what's already happened today? Three state-responsive openings here so the question lands in the user's emotional reality. Taps register as 'already eaten' — they boost the running total and the horizon begins to warm, but the plan that follows shows NEW suggestions. The horizon bar is introduced here and carries continuously through screen B and screen D.",
+  "Food cards now carry two lines of context. Line one is the warm benefit. Line two is the quieter serving estimate. Selection still lights up the gold halo, but the values are always visible — no clinical 'reveal' moment. We explored a few layouts; the chosen one keeps the warmth and adds the data without crowding.",
+  "Daily plan headers all moved to closing-the-gap language. The flow now starts with a horizon that's already partway up from A2. 'From earlier' chips quietly remind the user what's been counted. The plan suggestions never duplicate what they've already eaten.",
+  "Close the Gap got a search bar — inline pill-style, warm. Discovery, not data entry. Found foods get added to today's plan AND saved to My Foods, so the user's world quietly grows. Empty state is warm — 'nothing close yet,' not 'no results.'",
+  "Category labels in Will/Won't and My Foods got a copy pass — warmer, more inviting. My Foods also gets a search bar with the same feel. Plus a 'that's in your rotation now' confirmation message.",
+  "My Goals now leads with the protein and fiber targets. If the user hasn't set them, an 'Ask your provider' badge sits quietly to the right. Same pill-preset language as the onboarding screen for consistency. Weight, shot day, and check-in time stay below.",
+  "What we deliberately kept: the state selector, the celebration, the saved plan, the end-of-day arc, and the entire visual system. Nothing here is being rebuilt for novelty. Every change traces back to bootcamp feedback or copy revisions from CP.",
+  "Engineering build starts next. Everything you see is reflected in the live prototype — clickable, state-driven, ready for handoff."
+]
+</script>
+</head>
+<body>
+
+<deck-stage no-rail>
+
+  <!-- ─── 1 · COVER ─────────────────────────────────────────────── -->
+  <section class="slide dark">
+    <div style="margin-top: 60px;">
+      <div class="mono" style="color: var(--gold-glow); letter-spacing: 4px; opacity: 0.8;">Daily Fuel · May 21, 2026</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 80px; margin-top: 80px; flex: 1;">
+      <div style="flex: 1;">
+        <div class="eyebrow">Golden Hour v3</div>
+        <h1 class="display" style="font-size: 168px; margin-top: 32px;">
+          Close the <em>Gap</em>.
+        </h1>
+        <p class="body" style="font-size: 30px; line-height: 1.45; margin-top: 40px; color: var(--muted-soft); max-width: 800px;">
+          Same palette, same sun, same warmth.<br/>
+          New frame: <em style="font-family: var(--serif); font-style: italic; color: var(--gold-glow);">close the gap</em> is now the whole experience — not a feature.
+        </p>
+      </div>
+
+      <div style="width: 460px; height: 460px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 400 400" width="460" height="460">
+          <defs>
+            <radialGradient id="cover-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FBE9B3" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="cover-sun" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FEF6DE"/>
+              <stop offset="55%" stop-color="#F0D896"/>
+              <stop offset="100%" stop-color="#D4AF37"/>
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="200" fill="url(#cover-glow)"/>
+          <g transform="translate(200 200)">
+            <!-- 12 rays -->
+            <g>
+              <line x1="0" y1="-100" x2="0" y2="-125" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="0" y1="100" x2="0" y2="125" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="-100" y1="0" x2="-125" y2="0" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="100" y1="0" x2="125" y2="0" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="70.7" y1="-70.7" x2="88.3" y2="-88.3" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="-70.7" y1="-70.7" x2="-88.3" y2="-88.3" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="70.7" y1="70.7" x2="88.3" y2="88.3" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+              <line x1="-70.7" y1="70.7" x2="-88.3" y2="88.3" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+            </g>
+          </g>
+          <circle cx="200" cy="200" r="90" fill="url(#cover-sun)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>For engineering build</span>
+      <span>01 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 2 · WHAT CHANGED — INDEX ──────────────────────────────── -->
+  <section class="slide">
+    <div class="eyebrow">What's new in v3</div>
+    <h1 class="display" style="font-size: 84px; margin-top: 16px;">
+      Six changes. <em>Every one</em> from bootcamp feedback.
+    </h1>
+
+    <div class="index-list" style="margin-top: 56px;">
+      <div class="row-item">
+        <div class="num">01</div>
+        <div class="name">Privacy <em>Commitment</em></div>
+        <div class="desc">New screen 1a — between Medical and Go-Tos. A protective handshake before any data is shared.</div>
+        <span class="badge new">New</span>
+      </div>
+      <div class="row-item">
+        <div class="num">02</div>
+        <div class="name">My Goals · <em>Targets</em></div>
+        <div class="desc">New screen 1b — capture protein + fiber targets from provider. "Not yet" path is equally valid.</div>
+        <span class="badge new">New</span>
+      </div>
+      <div class="row-item">
+        <div class="num">03</div>
+        <div class="name">Any go-tos <em>so far today?</em></div>
+        <div class="desc">New screen A2 — the biggest UX addition. Bridges state selector and plan. Three state versions.</div>
+        <span class="badge new">New</span>
+      </div>
+      <div class="row-item">
+        <div class="num">04</div>
+        <div class="name">Food card <em>redesign</em></div>
+        <div class="desc">Two-line structure: warm benefit + quiet serving context. Always visible, no clinical reveal.</div>
+        <span class="badge updated">Updated</span>
+      </div>
+      <div class="row-item">
+        <div class="num">05</div>
+        <div class="name">Search in <em>Close the Gap + My Foods</em></div>
+        <div class="desc">Inline pill-style search. Discovery, not data entry. Found foods auto-save to My Foods.</div>
+        <span class="badge updated">Updated</span>
+      </div>
+      <div class="row-item">
+        <div class="num">06</div>
+        <div class="name">Copy + <em>category renames</em></div>
+        <div class="desc">All daily-plan headers now use closing-the-gap language. Categories renamed by CP for warmth.</div>
+        <span class="badge updated">Updated</span>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>v3 · What changed</span>
+      <span>02 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 3 · 1a · PRIVACY ────────────────────────────────────────── -->
+  <section class="slide">
+    <div class="row" style="flex: 1; align-items: stretch;">
+      <div class="col" style="flex: 1; padding-right: 40px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="eyebrow">Onboarding · 1a</div>
+          <span class="badge new">New</span>
+        </div>
+        <h1 class="display" style="font-size: 92px; margin-top: 18px;">
+          A <em>handshake</em>,<br/>not a legal form.
+        </h1>
+
+        <div class="rationale" style="margin-top: 36px;">
+          <div class="label">Why this matters</div>
+          <p class="body" style="font-size: 19px; color: var(--ink); margin: 0;">
+            Bootcamp feedback: users hesitate before sharing medication-adjacent personal data. We slow down, make three protective commitments plain, and use the warmest version of the sun — small, settled. The handshake before the data.
+          </p>
+        </div>
+
+        <div class="spec" style="margin-top: 36px;">
+          <div class="item">
+            <div class="pill do">Header</div>
+            <div class="text">"Your data stays <b>yours</b>." — italicized "yours" in Fraunces.</div>
+          </div>
+          <div class="item">
+            <div class="pill do">Body</div>
+            <div class="text">No sale. No insurer sharing. No advertising profile. Three plain promises.</div>
+          </div>
+          <div class="item">
+            <div class="pill">Sun</div>
+            <div class="text">Small (88px), settled (vitality 0.45). Not performative — a quiet pilot light.</div>
+          </div>
+          <div class="item">
+            <div class="pill">Link</div>
+            <div class="text">"Read our full privacy policy" — styled, non-functional (engineering scope).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-mount" data-screen="onb-1a"></div>
+        <div class="caption gold">1a · Privacy Commitment</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>NEW · Privacy</span>
+      <span>03 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 4 · 1b · TARGETS ──────────────────────────────────────── -->
+  <section class="slide">
+    <div class="row" style="flex: 1; align-items: stretch;">
+      <div class="col" style="flex: 1; padding-right: 40px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="eyebrow">Onboarding · 1b</div>
+          <span class="badge new">New</span>
+        </div>
+        <h1 class="display" style="font-size: 78px; margin-top: 18px;">
+          Targets are <em>infrastructure</em>,<br/>not a progress bar.
+        </h1>
+
+        <div class="rationale" style="margin-top: 30px;">
+          <div class="label">The principle we're protecting</div>
+          <p class="body" style="font-size: 18px; color: var(--ink); margin: 0;">
+            Targets power the gap math behind the scenes. But the user just sees a horizon that warms — no target line, no endpoint. Adding a marker would build a progress bar wearing a sun costume. We don't do that.
+          </p>
+        </div>
+
+        <div class="spec" style="margin-top: 30px;">
+          <div class="item">
+            <div class="pill do">Yes path</div>
+            <div class="text">Pill presets: <b>60g, 80g, 100g, 120g</b> protein · <b>25g, 30g, 35g</b> fiber. + custom field. Same language as Go-Tos.</div>
+          </div>
+          <div class="item">
+            <div class="pill do">Not yet</div>
+            <div class="text">Equally valid path. Warm message about provider conversation. No judgment.</div>
+          </div>
+          <div class="item">
+            <div class="pill">Confirm</div>
+            <div class="text">"Perfect — we'll use those to help you close the gap."</div>
+          </div>
+          <div class="item">
+            <div class="pill">My Goals</div>
+            <div class="text">Same fields surface at the top of <b>My Goals</b> — editable anytime.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-mount" data-screen="onb-1b" data-yes="true"></div>
+        <div class="caption gold">1b · Goals · Targets</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>NEW · Targets</span>
+      <span>04 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 5 · A2 · ANY GO-TOS — three states ───────────────────── -->
+  <section class="slide">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="eyebrow">Daily app · A2 — the biggest UX addition</div>
+      <span class="badge new">New</span>
+    </div>
+    <h1 class="display" style="font-size: 72px; margin-top: 14px;">
+      Any go-tos <em>so far today?</em>
+    </h1>
+    <p class="body" style="font-size: 21px; margin-top: 14px; max-width: 1280px;">
+      Bridges the state selector and the daily plan. The horizon begins here. A2 taps register as "already eaten" — boost the running total but the plan shows <b>new</b> suggestions. Three state-responsive openings so the question lands in the user's emotional reality.
+    </p>
+
+    <div style="display: flex; gap: 40px; margin-top: 36px; align-items: flex-start; justify-content: center;">
+      <div class="phone-frame" style="transform: scale(0.78); transform-origin: top center; margin-bottom: -180px;">
+        <div class="phone-mount" data-screen="state-a2" data-state="good" data-eaten="shake"></div>
+        <div class="caption gold">Feeling good</div>
+      </div>
+      <div class="phone-frame" style="transform: scale(0.78); transform-origin: top center; margin-bottom: -180px;">
+        <div class="phone-mount" data-screen="state-a2" data-state="cloudy"></div>
+        <div class="caption" style="color: var(--navy-mute);">Not hungry</div>
+      </div>
+      <div class="phone-frame" style="transform: scale(0.78); transform-origin: top center; margin-bottom: -180px;">
+        <div class="phone-mount" data-screen="state-a2" data-state="rough"></div>
+        <div class="caption" style="color: var(--muted);">Rough day</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>NEW · A2 · Three states</span>
+      <span>05 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 6 · A2 DEEPER — flow + design notes ───────────────────── -->
+  <section class="slide">
+    <div class="eyebrow">A2 · How it threads the system</div>
+    <h1 class="display" style="font-size: 76px; margin-top: 14px;">
+      The horizon <em>starts here</em>.
+    </h1>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 44px; flex: 1;">
+
+      <div class="stack" style="gap: 22px;">
+        <div class="diff">
+          <div class="lbl after">Feeling good</div>
+          <div class="copy">"Any go-tos so far today?"</div>
+          <div class="body" style="font-size: 15px; margin-top: 8px;">Sub: Even something small counts toward today.</div>
+        </div>
+        <div class="diff">
+          <div class="lbl after">Not hungry</div>
+          <div class="copy">"Even a shake or coffee counts. Anything so far?"</div>
+          <div class="body" style="font-size: 15px; margin-top: 8px;">Sub: Sometimes autopilot does more than we think.</div>
+        </div>
+        <div class="diff">
+          <div class="lbl after">Rough day</div>
+          <div class="copy">"Anything today? Even the small stuff counts."</div>
+          <div class="body" style="font-size: 15px; margin-top: 8px;">Sub: We'll build from wherever today started.</div>
+        </div>
+      </div>
+
+      <div class="stack" style="gap: 22px;">
+        <div class="rationale" style="border-left-color: var(--gold);">
+          <div class="label">Behavior · A2 taps</div>
+          <p class="body" style="font-size: 17px; color: var(--ink); margin: 0; line-height: 1.55;">
+            Tapping a card means <b>"I already ate this."</b> It does <b>not</b> appear in the plan that follows. The grams credit toward the running total. The horizon warms. A gentle "from earlier" chip carries the foods into Screen B as quiet context.
+          </p>
+        </div>
+        <div class="rationale" style="border-left-color: var(--navy);">
+          <div class="label">Behavior · Skip path</div>
+          <p class="body" style="font-size: 17px; color: var(--ink); margin: 0; line-height: 1.55;">
+            "Skip — start fresh" takes the user straight to Screen B with totals at <b>0</b> and the horizon visible. Empty isn't failure — it's a fresh start. The gap bar is always present from B onward.
+          </p>
+        </div>
+        <div class="rationale" style="border-left-color: var(--muted);">
+          <div class="label">Visual continuity</div>
+          <p class="body" style="font-size: 17px; color: var(--ink); margin: 0; line-height: 1.55;">
+            Atmosphere from the state selector carries through. Feeling good → golden tone. Not hungry → overcast. Rough day → dawn. The running total sits inline next to the horizon — they are one visual system, introduced together.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>A2 · Logic + copy</span>
+      <span>06 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 7 · FOOD CARD REDESIGN ────────────────────────────────── -->
+  <section class="slide">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="eyebrow">Component update · Food card</div>
+      <span class="badge updated">Updated</span>
+    </div>
+    <h1 class="display" style="font-size: 72px; margin-top: 14px;">
+      Two lines. <em>One celebration.</em>
+    </h1>
+    <p class="body" style="font-size: 19px; margin-top: 12px; max-width: 1180px;">
+      The benefit label sits in the body voice. The serving context sits below — smaller, lighter, muted gold. The role tag goes uppercase. Values are now always visible — selection brings the halo, not the data reveal.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 42px; margin-top: 50px; align-items: start;">
+      <div class="stack" style="gap: 14px; align-items: center;">
+        <div class="caption" style="color: var(--muted);">Option A · Stacked (current v2)</div>
+        <div data-card-demo="v2" style="width: 360px;"></div>
+        <p class="body" style="font-size: 14px; text-align: center; color: var(--muted); max-width: 280px; margin-top: 4px;">Single benefit line. Values only on select. Already shipped — the v2 baseline.</p>
+      </div>
+
+      <div class="stack" style="gap: 14px; align-items: center;">
+        <div class="caption gold" style="font-weight: 700;">★ Option B · Two-line (chosen)</div>
+        <div data-card-demo="v3-default" style="width: 360px;"></div>
+        <p class="body" style="font-size: 14px; text-align: center; color: var(--ink); max-width: 280px; margin-top: 4px;">Benefit + serving stacked. Quiet hierarchy. Values always visible. <b>Recommended.</b></p>
+      </div>
+
+      <div class="stack" style="gap: 14px; align-items: center;">
+        <div class="caption" style="color: var(--muted);">Option C · Inline data</div>
+        <div data-card-demo="v3-inline" style="width: 360px;"></div>
+        <p class="body" style="font-size: 14px; text-align: center; color: var(--muted); max-width: 280px; margin-top: 4px;">Benefit + serving on one line. Tighter, but data crowds the warmth.</p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>Updated · Food card</span>
+      <span>07 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 8 · DAILY PLAN HEADERS + FLOW ─────────────────────────── -->
+  <section class="slide">
+    <div class="row" style="flex: 1; align-items: stretch;">
+      <div class="col" style="flex: 1; padding-right: 50px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="eyebrow">Screen B · Daily plan</div>
+          <span class="badge updated">Updated</span>
+        </div>
+        <h1 class="display" style="font-size: 72px; margin-top: 14px;">
+          Every header now <em>names</em> the gap.
+        </h1>
+
+        <div class="stack" style="gap: 18px; margin-top: 36px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="diff before">
+              <div class="lbl before">Before · Rough day</div>
+              <div class="copy">"Let's keep it simple."</div>
+            </div>
+            <div class="diff">
+              <div class="lbl after">After · Rough day</div>
+              <div class="copy">"Rough day or not, small wins still count."</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="diff before">
+              <div class="lbl before">Before · Not hungry</div>
+              <div class="copy">"Low fuel gauge."</div>
+            </div>
+            <div class="diff">
+              <div class="lbl after">After · Not hungry</div>
+              <div class="copy">"Even a little can help close the gap."</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="diff before">
+              <div class="lbl before">Before · Feeling good</div>
+              <div class="copy">"Good day to close the gap."</div>
+            </div>
+            <div class="diff" style="border: 1px solid var(--gold);">
+              <div class="lbl after">After · Feeling good</div>
+              <div class="copy">"Good day to close the gap." <span style="font-style: normal; font-family: var(--sans); font-size: 13px; color: var(--muted-soft); letter-spacing: 1.5px; text-transform: uppercase; margin-left: 6px;">unchanged</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rationale" style="margin-top: 28px;">
+          <div class="label">Quiet thread</div>
+          <p class="body" style="font-size: 17px; color: var(--ink); margin: 0;">
+            A "From earlier" chip strip shows any foods carried forward from A2. The horizon never resets — it picks up where A2 left off and continues warming.
+          </p>
+        </div>
+      </div>
+
+      <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-mount" data-screen="plan" data-state="good" data-eaten="shake,eggsb" data-selected="edamame,nuts"></div>
+        <div class="caption gold">B · Daily plan · with A2 carry-forward</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>Updated · Plan</span>
+      <span>08 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 9 · CLOSE THE GAP — SEARCH ────────────────────────────── -->
+  <section class="slide">
+    <div class="row" style="flex: 1; align-items: stretch;">
+      <div class="col" style="flex: 1; padding-right: 50px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="eyebrow">Screen D · Close the gap</div>
+          <span class="badge updated">Updated</span>
+        </div>
+        <h1 class="display" style="font-size: 76px; margin-top: 14px;">
+          Search as <em>discovery</em>,<br/>not data entry.
+        </h1>
+
+        <div class="rationale" style="margin-top: 32px;">
+          <div class="label">Why inline pill style</div>
+          <p class="body" style="font-size: 18px; color: var(--ink); margin: 0; line-height: 1.6;">
+            A floating sticky or full-screen search overlay would feel like a different app. The bar matches the language of the food pills — same warmth, same family. Searching is a discovery moment, not a database query.
+          </p>
+        </div>
+
+        <div class="spec" style="margin-top: 36px;">
+          <div class="item">
+            <div class="pill do">Placeholder</div>
+            <div class="text">"Search for something that sounds good"</div>
+          </div>
+          <div class="item">
+            <div class="pill do">On add</div>
+            <div class="text">Confirmation: <b>"Added to today's plan — and saved to My Foods."</b> Warm chip animates in.</div>
+          </div>
+          <div class="item">
+            <div class="pill">Empty state</div>
+            <div class="text">"Nothing close yet. Try another search."</div>
+          </div>
+          <div class="item">
+            <div class="pill">My Foods</div>
+            <div class="text">Same pattern, different copy. "Search for foods you already love" → "That's in your rotation now."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-mount" data-screen="close-gap" data-state="good" data-search="greek"></div>
+        <div class="caption gold">D · Close the gap · with search</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>Updated · Search</span>
+      <span>09 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 10 · CATEGORY RENAMES + MY FOODS / MY GOALS ──────────── -->
+  <section class="slide">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="eyebrow">Copy + structure</div>
+      <span class="badge updated">Updated</span>
+    </div>
+    <h1 class="display" style="font-size: 68px; margin-top: 14px;">
+      Warmer <em>category names</em>. Targets at the top of My Goals.
+    </h1>
+
+    <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 40px; margin-top: 44px; flex: 1; align-items: start;">
+
+      <!-- category rename table -->
+      <div class="stack" style="gap: 10px;">
+        <div class="caption" style="color: var(--muted); text-align: left;">Will eat · Won't eat · My Foods</div>
+        <table style="border-collapse: collapse; width: 100%; margin-top: 8px;">
+          <tbody>
+            <tr>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--cream-line);"><span class="struck">Protein-primary</span></td>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--cream-line);">→</td>
+              <td style="padding: 14px 14px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gold-deep); border-bottom: 1px solid var(--cream-line);">Protein Boosters</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--cream-line);"><span class="struck">Protein + fiber (Doubles)</span></td>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--cream-line);">→</td>
+              <td style="padding: 14px 14px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gold-deep); border-bottom: 1px solid var(--cream-line);">Double Wins</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--cream-line);"><span class="struck">Nuts & Seeds</span></td>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--cream-line);">→</td>
+              <td style="padding: 14px 14px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gold-deep); border-bottom: 1px solid var(--cream-line);">Crunchy Staples</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--cream-line);"><span class="struck">Vegetables & Fruit</span></td>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--cream-line);">→</td>
+              <td style="padding: 14px 14px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gold-deep); border-bottom: 1px solid var(--cream-line);">Fresh Add-Ons</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 15px; color: var(--muted);"><span class="struck">Support foods</span></td>
+              <td style="padding: 14px 14px; font-family: var(--sans); font-size: 13px; color: var(--muted);">→</td>
+              <td style="padding: 14px 14px; font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--gold-deep);">Gentle Helpers</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="rationale" style="margin-top: 18px;">
+          <div class="label">Why rename</div>
+          <p class="body" style="font-size: 15px; color: var(--ink); margin: 0;">
+            Functional names → human names. "Support foods" feels clinical. "Gentle Helpers" feels like a friend. Bootcamp users responded warmly to the latter language.
+          </p>
+        </div>
+      </div>
+
+      <div class="phone-frame" style="transform: scale(0.65); transform-origin: top center; margin-bottom: -280px;">
+        <div class="phone-mount" data-screen="my-foods"></div>
+        <div class="caption gold">E · My Foods · with search</div>
+      </div>
+
+      <div class="phone-frame" style="transform: scale(0.65); transform-origin: top center; margin-bottom: -280px;">
+        <div class="phone-mount" data-screen="my-goals"></div>
+        <div class="caption gold">F · My Goals · targets at top</div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>Updated · Copy + structure</span>
+      <span>10 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 11 · WHAT WE KEPT ─────────────────────────────────────── -->
+  <section class="slide">
+    <div class="eyebrow">Discipline</div>
+    <h1 class="display" style="font-size: 92px; margin-top: 14px;">
+      What we <em>didn't</em> touch.
+    </h1>
+    <p class="body" style="font-size: 22px; margin-top: 16px; max-width: 1180px;">
+      Don't rebuild what works. Every change traces back to bootcamp feedback or the CP copy pass — nothing for novelty's sake.
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 50px;">
+      <div class="rationale" style="border-left-color: var(--navy);">
+        <div class="label" style="color: var(--navy);">State selector · A</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Three warm cards. Atmosphere shift. Untouched.</p>
+      </div>
+      <div class="rationale" style="border-left-color: var(--gold);">
+        <div class="label">Celebration · C</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Sun bloom on save. Totals-driven copy. Untouched.</p>
+      </div>
+      <div class="rationale" style="border-left-color: var(--navy);">
+        <div class="label" style="color: var(--navy);">Saved plan · C2</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Time-of-day mark + completed state. Untouched.</p>
+      </div>
+      <div class="rationale" style="border-left-color: var(--gold);">
+        <div class="label">End of day · G + H</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Sunset moment. Nailed / Survived / Skipped. Untouched.</p>
+      </div>
+      <div class="rationale" style="border-left-color: var(--navy);">
+        <div class="label" style="color: var(--navy);">Notification arc</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Shot-day rhythm. Check-in time. Untouched.</p>
+      </div>
+      <div class="rationale" style="border-left-color: var(--gold);">
+        <div class="label">Visual system</div>
+        <p class="body" style="font-size: 16px; color: var(--ink); margin: 0;">Cream + navy + gold. Fraunces italics. Sun + horizon. Untouched.</p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>What we kept</span>
+      <span>11 / 12</span>
+    </div>
+  </section>
+
+  <!-- ─── 12 · HANDOFF ──────────────────────────────────────────── -->
+  <section class="slide dark">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div class="eyebrow">Ready for engineering</div>
+      <h1 class="display" style="font-size: 132px; margin-top: 32px;">
+        Live prototype. <em>Clickable</em>.<br/>State-driven.
+      </h1>
+      <p class="body" style="font-size: 26px; margin-top: 36px; max-width: 1280px;">
+        Every screen in this deck is in the v3 prototype. Sidebar markers — <span class="badge new" style="margin: 0 4px;">NEW</span> + <span class="badge updated" style="margin: 0 4px;">v3</span> — show what changed.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; max-width: 1500px;">
+        <div style="padding: 24px 28px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 16px;">
+          <div class="mono" style="color: var(--gold-glow); font-size: 13px;">01 · This week</div>
+          <div class="display" style="font-size: 30px; color: var(--cream); margin-top: 10px;">Engineering kickoff</div>
+        </div>
+        <div style="padding: 24px 28px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 16px;">
+          <div class="mono" style="color: var(--gold-glow); font-size: 13px;">02 · Next</div>
+          <div class="display" style="font-size: 30px; color: var(--cream); margin-top: 10px;">Search index spec</div>
+        </div>
+        <div style="padding: 24px 28px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 16px;">
+          <div class="mono" style="color: var(--gold-glow); font-size: 13px;">03 · Open</div>
+          <div class="display" style="font-size: 30px; color: var(--cream); margin-top: 10px;">A2 analytics events</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span class="left"><span class="dot"></span>Arty for Soph · v3 ready</span>
+      <span>12 / 12</span>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- React + the prototype's shared code so we can render real screens inline -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="df-shared.jsx"></script>
+<script type="text/babel" src="df-shapes.jsx"></script>
+<script type="text/babel" src="df-onboarding.jsx"></script>
+<script type="text/babel" src="df-screens.jsx"></script>
+<script type="text/babel" src="df-deck-mounts.jsx"></script>
+
+<script src="deck-stage.js"></script>
+</body>
+</html>

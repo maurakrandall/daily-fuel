@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import SunGraphic from './ui/SunGraphic';
 
 interface LandingProps {
   onStart: () => void;
@@ -10,17 +11,7 @@ export default function Landing({ onStart }: LandingProps) {
   // Golden Hour Full Sun Motif Component (Large for Landing)
   const HeroSunMotif = () => (
     <div className="flex justify-center mb-12 relative">
-      <div className="w-40 h-40 bg-gradient-to-b from-[#F4D780] to-[#D4AF37] rounded-full shadow-[0_0_60px_rgba(212,175,55,0.4)] relative z-10"></div>
-      {/* Subtle rays */}
-      <div className="absolute top-[-16px] left-1/2 -translate-x-1/2 w-0.5 h-6 bg-[#D4AF37]/40 rounded-full"></div>
-      <div className="absolute bottom-[-16px] left-1/2 -translate-x-1/2 w-0.5 h-6 bg-[#D4AF37]/40 rounded-full"></div>
-      <div className="absolute left-[-16px] top-1/2 -translate-y-1/2 w-6 h-0.5 bg-[#D4AF37]/40 rounded-full"></div>
-      <div className="absolute right-[-16px] top-1/2 -translate-y-1/2 w-6 h-0.5 bg-[#D4AF37]/40 rounded-full"></div>
-      
-      <div className="absolute top-[-8px] left-[-8px] w-5 h-0.5 bg-[#D4AF37]/40 rounded-full rotate-45 origin-bottom-right"></div>
-      <div className="absolute top-[-8px] right-[-8px] w-5 h-0.5 bg-[#D4AF37]/40 rounded-full -rotate-45 origin-bottom-left"></div>
-      <div className="absolute bottom-[-8px] left-[-8px] w-5 h-0.5 bg-[#D4AF37]/40 rounded-full -rotate-45 origin-top-right"></div>
-      <div className="absolute bottom-[-8px] right-[-8px] w-5 h-0.5 bg-[#D4AF37]/40 rounded-full rotate-45 origin-top-left"></div>
+      <SunGraphic size={240} showRays={true} glowOpacity={0.6} />
     </div>
   );
 
